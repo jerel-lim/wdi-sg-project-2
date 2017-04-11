@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
-  res.render('homepage')
+  res.render('static/homepage')
 })
 
 // setup the ejs template
