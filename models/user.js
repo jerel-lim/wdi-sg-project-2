@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-var bcrypt = require ('bcrypt')
+var bcrypt = require ('bcryptjs')
 var userSchema = mongoose.Schema({
  email: {
    type: String,
