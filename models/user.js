@@ -18,17 +18,44 @@ var userSchema = mongoose.Schema({
    type:String,
    required:true,
    minlength: [8, 'Password must be 8 and 99 charactes']
- }
+ },
+ reservations_id: [{
+   type: mongoose.Schema.Types.ObjectId,
+   ref: 'reservations'
+}],
+dateJoined: {
+   type: Date,
+   default: Date.now
+},
+isAdmin: {
+   type: Boolean,
+   default: false
+}
 })
 
 userSchema.pre('save', function(next){
   var user = this
   var hash = bcrypt.hashSync(user.password, 10)
-// console.log('original password', user.password)
 user.password = hash
-// console.log('hased password', hash)
 next()
 })
+
+userSchema.statics.findbyEmail = function(email, cb) {
+  this.findOne({
+    email: email}, function(err,foundUser){
+      if (err) return cb(err)
+      cb(null, foundUser)
+    })
+}
+
+userSchema.methods.validPassword = function(givenPassword) {
+  var hashedpassword = this.password
+return bcrypt.compareSync(givenPassword, hashedpassword)
+}
+userSchema.statics.isAdmin = function(adminKey) {
+  this.isAdmin = (adminKey === 'admin')
+}
+
 
 var User = mongoose.model('User', userSchema)
 

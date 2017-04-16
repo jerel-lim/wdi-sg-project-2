@@ -1,7 +1,7 @@
 var express = require('express')
 var app = express()
 var port = process.env.PORT || 4000
-
+require('dotenv').config({silent:true})
 // mongoose setup
 var dbURI = process.env.PROD_MONGODB || 'mongodb://localhost:27017/project2'
 var mongoose = require('mongoose')
@@ -34,31 +34,51 @@ var methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
 app.use(express.static('assets'))
+var session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({url: 'mongodb://localhost:27017/project2'})
+}))
+
+var flash = require('connect-flash')
+app.use(flash())
+
+var passport = require ('./config/passport')
+app.use(passport.initialize())
+app.use(passport.session())
+
+mongoose.Promise = global.Promise
+
+
+
+
+
+
+
+
+
+
+
 
 app.get('/', function (req, res) {
   res.render('static/homepage')
 })
 
-app.get('/login', function (req, res) {
-  res.render('static/login')
-})
+var userRouter = require('./routes/user_router')
+app.use('/', userRouter)
+
+// app.get('/login', function (req, res) {
+//   res.render('auth/login')
+// })
 
 app.get('/profile', function (req, res) {
   res.render('static/profile')
 })
-var authController = require('./controllers/auth')
-app.use('/login', authController);
-
-
-
-
-
-
-
-
-
-
-
+// var authController = require('./controllers/auth')
+// app.use('/login', authController);
 
 
 
@@ -66,30 +86,26 @@ app.use('/login', authController);
 // var moviesController = require('./controllers/movies_controller')
 // app.use(moviesController)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.use(function (req, res) {
   res.send('error found')
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 app.listen(port, function () {
