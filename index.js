@@ -27,6 +27,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 // setup the ejs template
+var expressLayouts = require('express-ejs-layouts')
+app.use(expressLayouts)
 app.set('view engine', 'ejs')
 app.use(require('morgan')('dev'));
 // setup the method override
@@ -43,13 +45,19 @@ app.use(session({
   store: new MongoStore({url: 'mongodb://localhost:27017/project2'})
 }))
 
-var flash = require('connect-flash')
-app.use(flash())
+
 
 var passport = require ('./config/passport')
 app.use(passport.initialize())
 app.use(passport.session())
 
+var flash = require('connect-flash')
+app.use(flash())
+app.use(function(req, res, next) {
+  res.locals.alerts = req.flash();
+  res.locals.currentUser = req.user;
+  next();
+});
 mongoose.Promise = global.Promise
 
 
@@ -70,13 +78,16 @@ app.get('/', function (req, res) {
 var userRouter = require('./routes/user_router')
 app.use('/', userRouter)
 
+var userRoomRouter = require('./routes/userRoom_router')
+app.use('/rooms', userRoomRouter)
+
 // app.get('/login', function (req, res) {
 //   res.render('auth/login')
 // })
 
-app.get('/profile', function (req, res) {
-  res.render('static/profile')
-})
+// app.get('/profile', function (req, res) {
+//   res.render('static/profile')
+// })
 // var authController = require('./controllers/auth')
 // app.use('/login', authController);
 

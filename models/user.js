@@ -17,11 +17,11 @@ var userSchema = mongoose.Schema({
  password: {
    type:String,
    required:true,
-   minlength: [8, 'Password must be 8 and 99 charactes']
+   minlength: [3, 'Password must be 3 and 99 charactes']
  },
  reservations_id: [{
    type: mongoose.Schema.Types.ObjectId,
-   ref: 'reservations'
+   ref: 'Room'
 }],
 dateJoined: {
    type: Date,
@@ -53,7 +53,7 @@ userSchema.methods.validPassword = function(givenPassword) {
 return bcrypt.compareSync(givenPassword, hashedpassword)
 }
 userSchema.statics.isAdmin = function(adminKey) {
-  this.isAdmin = (adminKey === 'admin')
+  return (adminKey === 'admin')
 }
 
 

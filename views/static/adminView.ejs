@@ -1,0 +1,21 @@
+
+<div class="container">
+  <h1 class="page-header">Current Reservations</h1>
+
+  <table>
+    <tr>
+      <th>Bedrooms</th>
+      <th>Price/day</th>
+      <th>From</th>
+      <th>To</th>
+    </tr>
+    <% roomsBooked.forEach(function (rooms) { %>
+    <tr>
+      <td><%- rooms.beds %></td>
+      <td><%- rooms.price %></td>
+      <td><%- rooms.dateFrom %></td>
+      <td><%- rooms.dateTo %></td>
+    </tr>
+    <% }) %>
+
+  </table>

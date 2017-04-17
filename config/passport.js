@@ -20,15 +20,13 @@ passport.use('local-signup', new LocalStrategy({
   User.findOne({ 'email': givenEmail }, function (err, foundUser) {
     if (err) return next(err)
     if (foundUser) {
-      return next(null, false, req.flash('flash', {
-        type: 'danger',
-        message: 'Email is already in used. Please login using email or register using another email.'
-      }))
+      return next(null, false, req.flash('error', 'Email is already in used. Please login using email or register using another email.')
+      // req.flash('flash', {
+      //   type: 'danger',
+      //   message: 'Email is already in used. Please login using email or register using another email.'
+      // })
+    )
     } else {
-        //   console.log(req.body)
-        // console.log(req.body.adminKey)
-        // console.log(req.body.adminKey === 'admin')
-        // console.log(User.isAdmin(req.body.adminKey))
       var newUser = new User({
         email: givenEmail,
         name: req.body.name,
@@ -44,6 +42,35 @@ passport.use('local-signup', new LocalStrategy({
         next(null, data)
       })
     }
+  })
+}))
+
+passport.use('local-login', new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true
+}, function (req, givenEmail, givenPassword, next) {
+  User.findOne({ 'email': givenEmail}, function (err, foundUser) {
+    if (err) return next(err)
+    if (!foundUser) {
+      return next(err, false, req.flash('error', 'No such user found.')
+    //
+    // req.flash('flash', {
+    //     type: 'danger',
+    //     message: 'No such user found.'
+    //   })
+    )
+    }
+    if (!foundUser.validPassword(givenPassword)) {
+      return next(null, false, req.flash('error', 'Invalid password.')
+
+      // req.flash('flash', {
+      //   type: 'danger',
+      //   message: 'Invalid password.'
+      // })
+    )
+    }
+    return next(err, foundUser)
   })
 }))
 

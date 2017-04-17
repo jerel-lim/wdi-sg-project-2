@@ -1,0 +1,10 @@
+
+Verb	Path	Action	Used for
+GET	/teams	index	display a list of all teams
+GET	/teams/new	new	return an HTML form for creating a new team
+POST	/teams	create	create a new team (using form data from /teams/new)
+
+GET	/teams/:name	show	display a specific team
+GET	/teams/:name/edit	edit	return an HTML form for editing a team
+PUT	/teams/:name	update	update a specific team (using form data from /teams/:name/edit)
+DELETE	/teams/:name	destroy	deletes a specific team
