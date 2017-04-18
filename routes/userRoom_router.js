@@ -2,41 +2,52 @@ const express = require('express')
 const router = express.Router()
 const notLoggedIn = require('./login_status/notLoggedIn')
 const roomController = require('../controllers/rooms_controller')
+const isNotAdmin = require('./isAdmin/isNotAdmin')
+const isAdmin = require('./isAdmin/isAdmin')
 
 //user reservation routes
 
-router.get('/', notLoggedIn, roomController.userSearchFields) //??
-
-router.post('/', notLoggedIn, roomController.userSearchFieldsValue) //??
-
-router.get('/', notLoggedIn, roomController.userListAll)//???
-
-router.get('/:id/edit', notLoggedIn, roomController.userFormForUpdate) //??
-
-router.put('/:id', notLoggedIn, roomController.userUpdate)//update reservation button
-
-router.delete('/', notLoggedIn, roomController.userRemove) //delete reservation button
-
-router.post('/', notLoggedIn, roomController.userCreate) //new reservation button
 
 
+router.get('/', notLoggedIn, isAdmin, roomController.userListAll)//list all current reservation
+router.post('/', notLoggedIn, isAdmin, roomController.userCreate) //new reservation
 
-router.get('/:id', notLoggedIn, roomController.userShowOne) // ??
+router.get('/search', notLoggedIn, isAdmin, roomController.userSearchFieldsValue) //form for selecting fields for searching possible reservations
+router.post('/search', notLoggedIn, isAdmin, roomController.userSearchFields) //display list of all posible reservations for user
+
+router.get('/:id/edit', notLoggedIn, isAdmin, roomController.userFormForUpdate) //form to update
+
+router.put('/:id', notLoggedIn, isAdmin, roomController.userUpdate)//update reservation button
+
+router.delete('/', notLoggedIn, isAdmin, roomController.userRemove) //delete reservation button
 
 
 
 
-router.get('/', notLoggedIn, roomController.adminAllRooms) //display all rooms
-router.get('/new', notLoggedIn, roomController.adminNewRoomsForm) //add new rooms
-router.post('/', notLoggedIn, roomController.adminCreateNewRooms) //create rooms
+// router.get('/:id', notLoggedIn, roomController.userShowOne) // ??
+//
+// router.get('/admin/:id', notLoggedIn, roomController.adminShowOne) // show 1 room details
 
-router.get('/:id', notLoggedIn, roomController.adminShowOne) // show 1 room details
 
-router.get('/:id/edit', notLoggedIn, roomController.adminFormForUpdate) //update form details of 1 room
 
-router.put('/:id', notLoggedIn, roomController.adminUpdate)//update button
+router.get('/admin', notLoggedIn,isNotAdmin, roomController.adminAllRooms) //display all rooms
+router.get('/admin/new', notLoggedIn, isNotAdmin, roomController.adminNewRoomsForm) //add new rooms
+router.post('/admin', notLoggedIn, isNotAdmin, roomController.adminCreateNewRooms) //create rooms
 
-router.delete('/:id', notLoggedIn, roomController.adminRemove) //delete button
+router.get('/admin/:id/edit', notLoggedIn, isNotAdmin, roomController.adminFormForUpdate) //update form details of 1 room
+
+router.put('/admin/:id', notLoggedIn, isNotAdmin, roomController.adminUpdate)//update button
+
+router.delete('/admin/:id', notLoggedIn, isNotAdmin, roomController.adminRemove) //delete button
+
+
+
+
+
+
+
+
+
 
 // const todoController = require('../controllers/todo_controller')
 //

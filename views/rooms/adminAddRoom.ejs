@@ -1,7 +1,7 @@
 <% include ../static/header %>
 
 <div class="container">
-  <form action="/rooms/search" method="POST">
+  <form action="/rooms/admin" method="POST">
     <div class="form-group">
       <label for="beds">Number of Beds</label>
       <input type="number" class="form-control" id="bedInput" placeholder="Number of Beds" name="beds">
@@ -15,9 +15,9 @@
       <input type="date" class="form-control" id="toInput" placeholder="mm/dd/yyyy" name="dateTo">
     </div>
     <div class="form-group">
-      <label for="price">Maximum Price</label>
+      <label for="price">Price/night</label>
       <input type="number" class="form-control" id="priceInput" placeholder="Enter your budget" name="price">
     </div>
-    <button type="submit" class="btn btn-default">Search for Rooms</button>
+    <button type="submit" class="btn btn-default">Add Room for Reservations</button>
   </form>
 </div>

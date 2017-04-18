@@ -1,0 +1,41 @@
+<% include ../static/header %>
+
+<div class="container">
+  <table class="table">
+    <tr>
+      <th>Bedrooms</th>
+      <th>Price/day</th>
+      <th>From</th>
+      <th>To</th>
+      <th></th>
+      <th></th>
+    </tr>
+      <tr>
+      <td><%- toUpdateRoom.beds %></td>
+      <td><%- toUpdateRoom.price %></td>
+      <td><%- toUpdateRoom.dateFrom %></td>
+      <td><%- toUpdateRoom.dateTo %></td>
+      </tr>
+  </table>
+
+
+  Update above <%=toUpdateRoom.beds%> bed room details to :
+</br>
+</br>
+
+  <form action=<%= "/rooms/admin/" + toUpdateRoom.id + "?_method=PUT" %> method="POST">
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="price" class="form-control" id="priceInput" name="price">
+    </div>
+    <div class="form-group">
+      <label for="dateFrom">Available From Date</label>
+      <input type="date" class="form-control" id="fromInput" placeholder="mm/dd/yyyy" name="dateFrom">
+    </div>
+    <div class="form-group">
+      <label for="dateTo">Available To Date</label>
+      <input type="date" class="form-control" id="toInput" placeholder="mm/dd/yyyy" name="dateTo">
+    </div>
+    <button type="submit" class="btn btn-default">Update Room Details</button>
+  </form>
+</div>

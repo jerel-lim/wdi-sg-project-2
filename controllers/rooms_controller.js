@@ -1,77 +1,227 @@
 const Room = require('../models/room')
 let roomController = {
-  searchForm: function (req, res) {
+  userListAll: function (req, res) {
+    res.render('rooms/index')
+  },
+
+  userCreate: function (req, res) {
+// to ask for help
+//
+
+// var newRoom = new Room({
+//     beds: req.body.beds,
+//     address: req.body.issues.address,
+//     problem: req.body.issues.problem,
+//     dateCreated: req.body.issues.dateCreated,
+//     user_id: req.user._id,
+//     isFixed: req.body.issues.isFixed
+//   })
+
+    res.render('rooms/index')
+  },
+
+  userSearchFieldsValue: function (req, res) {
     res.render('rooms/show')
   },
 
-  list: (req, res) => {
-    Room.find({}, (err, rooms) => {
+  userSearchFields: function (req, res) {
+    if (!req.body.dateFrom || !req.body.dateTo) {
+      req.flash('error', 'Please fill in dates')
+      res.redirect('/rooms/search')
+    }
+    if (req.body.dateFrom > req.body.dateTo) {
+      req.flash('error', 'From Date is later than To Date')
+      res.redirect('/rooms/search')
+    }
+    if (req.body.beds < 0) {
+      req.flash('error', 'Please fill in valid number of beds')
+      res.redirect('/rooms/search')
+    }
+    console.log(req.body)
+    Room.find(
+      {beds: req.body.beds, // add in option for no beds
+        dateFrom: { $lte: req.body.dateFrom}, // dates wrong?
+        dateTo: {$gte: req.body.dateTo},
+        price: { $lte: req.body.price}, // to add in option for no price
+        status: false}, function (err, rooms) {
       if (err) throw err
+      console.log(rooms)
       res.render('rooms/new', { allAvailableRooms: rooms })
     })
   },
 
-  new: (req, res) => {
-    res.render('rooms/new')
-  },
-
-  show: function (req, res, next) {
-    Room.findById(req.params.id).populate('user_id').exec(function (err, output) {
-      if (err) return next(err)
-      res.render('rooms/show', {
-        issue: output
+  userFormForUpdate: function (req, res) {
+    Room.findById(req.params.id, function (err, roomToEdit) {
+      if (err) throw err
+      res.render('rooms/edit', {
+        roomToEdit: roomToEdit
       })
     })
   },
 
-
-  listOne: (req, res) => {
-    Todo.findById(req.params.id, (err, todoItem) => {
+  userUpdate: function (req, res) {
+    if (req.body.dateFrom > req.body.dateTo) {
+      req.flash('error', 'From Date is later than To Date')
+      res.redirect('/rooms/' + req.params.id + '/edit')
+    }
+    var editedDateFrom = req.body.dateFrom
+    var editedDateTo = req.body.dateTo
+    Room.findByIdAndUpdate(req.params.id, { $set: { dateFrom: editedDateFrom, dateTo: editedDateTo}}, function (err, output) {
       if (err) throw err
-      res.render('rooms/show', { todoItem: todoItem })
-    })
-  },
-
-  create: (req, res) => {
-    let newTodo = new Todo({
-      title: req.body.title,
-      description: req.body.description,
-      completed: false
-    })
-    newTodo.save(function (err, savedEntry) {
-      if (err) throw err
+      req.flash('success', 'You have edited your reservation.')
       res.redirect('/rooms')
     })
   },
 
-  edit: (req, res) => {
-    Todo.findById(req.params.id, (err, todoItem) => {
+  userRemove: function (req, res) {
+    Room.findByIdAndRemove(req.params.id, function (err, room) {
       if (err) throw err
-      res.render('todo/edit', { todoItem: todoItem })
-    })
-  },
-
-  update: (req, res) => {
-    Todo.findOneAndUpdate({
-      _id: req.params.id
-    }, {
-      title: req.body.title,
-      description: req.body.description,
-      completed: req.body.completed
-    }, (err, todoItem) => {
-      if (err) throw err
-      res.redirect('/todos/' + todoItem.id)
-    })
-  },
-
-  delete: (req, res) => {
-    Room.findByIdAndRemove(req.params.id, (err, todoItem) => {
-      if (err) throw err
+      req.flash('success', 'You have deleted your reservation.')
+      // var deletedroomId = req.params.id
+      // var userRooms = req.user.reservation_id
+      // userRooms.splice(userRooms.indexOf(deletedIssueId), 1)
+      // req.user.save()
       res.redirect('/rooms')
+    })
+  },
+
+  adminAllRooms: function (req, res) {
+    Room.find({}, (err, rooms) => {
+      if (err) throw err
+      res.render('rooms/adminListAll', { allRooms: rooms})
+    })
+  },
+
+  adminNewRoomsForm: function (req, res) {
+    res.render('rooms/adminAddRoom')
+  },
+
+  adminCreateNewRooms: function (req, res) {
+    if (!req.body.beds || req.body.beds < 1) {
+      req.flash('error', 'Please set number of beds')
+      res.redirect('/rooms/admin/new')
+    }
+    else if (req.body.dateFrom > req.body.dateTo) {
+      req.flash('error', 'From Date is later than To Date')
+      res.redirect('/rooms/admin/new')
+    }
+    else if (!req.body.dateFrom || !req.body.dateTo) {
+      req.flash('error', 'Please enter From Date and To Date')
+      res.redirect('/rooms/admin/new')
+    }
+    else if (!req.body.price || req.body.price < 1) {
+      req.flash('error', 'Please set price of room per day')
+      res.redirect('/rooms/admin/new')
+    }
+    else {
+    var newRoom = new Room({
+      beds: req.body.beds,
+      price: req.body.price,
+      dateFrom: req.body.dateFrom,
+      dateTo: req.body.dateTo,
+      status: false
+    })
+    newRoom.save(function (err, savedEntry) {
+      if (err) throw err
+      res.redirect('/rooms/admin')
     })
   }
+  },
 
+  adminFormForUpdate: function (req, res) {
+    Room.findById(req.params.id, function (err, room) {
+      if (err) throw err
+      res.render('rooms/adminEdit', { toUpdateRoom: room })
+    })
+  },
 
+  adminUpdate: function (req, res) {
+    if (req.body.dateFrom > req.body.dateTo) {
+      req.flash('error', 'From Date is later than To Date')
+      res.redirect('/rooms/admin/' + req.params.id + '/edit')
+    }
+    else if (!req.body.dateFrom || !req.body.dateTo) {
+      req.flash('error', 'Please enter From Date and To Date')
+      res.redirect('/rooms/admin/' + req.params.id + '/edit')
+    }
+    else if (req.body.price < 1) {
+      req.flash('error', 'Please set price of room per day')
+      res.redirect('/rooms/admin/' + req.params.id + '/edit')
+    }
+else{
+    var editedDateFrom = req.body.dateFrom
+    var editedDateTo = req.body.dateTo
+    var editedPrice = req.body.price
+    Room.findByIdAndUpdate(req.params.id, { $set: {dateFrom: editedDateFrom, dateTo: editedDateTo, price: editedPrice }}, function (err, output) {
+      if (err) throw err
+      req.flash('success', 'You have successfully edited room details.')
+      res.redirect('/rooms/admin')
+    })
+}
+  },
+
+  adminRemove: function(req,res){
+    Room.findByIdAndRemove(req.params.id, function (err, room){
+      if (err) throw err
+      res.redirect('/rooms/admin')
+    })
+  }
+  //
+  // show: function (req, res, next) {
+  //   Room.findById(req.params.id).populate('user_id').exec(function (err, output) {
+  //     if (err) return next(err)
+  //     res.render('rooms/show', {
+  //       issue: output
+  //     })
+  //   })
+  // },
+  //
+  //
+  // listOne: (req, res) => {
+  //   Todo.findById(req.params.id, (err, todoItem) => {
+  //     if (err) throw err
+  //     res.render('rooms/show', { todoItem: todoItem })
+  //   })
+  // },
+  //
+  // create: (req, res) => {
+  //   let newTodo = new Todo({
+  //     title: req.body.title,
+  //     description: req.body.description,
+  //     completed: false
+  //   })
+  //   newTodo.save(function (err, savedEntry) {
+  //     if (err) throw err
+  //     res.redirect('/rooms')
+  //   })
+  // },
+  //
+  // edit: (req, res) => {
+  //   Todo.findById(req.params.id, (err, todoItem) => {
+  //     if (err) throw err
+  //     res.render('todo/edit', { todoItem: todoItem })
+  //   })
+  // },
+  //
+  // update: (req, res) => {
+  //   Todo.findOneAndUpdate({
+  //     _id: req.params.id
+  //   }, {
+  //     title: req.body.title,
+  //     description: req.body.description,
+  //     completed: req.body.completed
+  //   }, (err, todoItem) => {
+  //     if (err) throw err
+  //     res.redirect('/todos/' + todoItem.id)
+  //   })
+  // },
+  //
+  // delete: (req, res) => {
+  //   Room.findByIdAndRemove(req.params.id, (err, todoItem) => {
+  //     if (err) throw err
+  //     res.redirect('/rooms')
+  //   })
+  // }
 
     //
     //
@@ -203,13 +353,6 @@ let roomController = {
     //
     //
     //
-
-
-
-
-
-
-
 
 }
 

@@ -1,10 +1,16 @@
+<% include ../static/header %>
 
-Verb	Path	Action	Used for
-GET	/teams	index	display a list of all teams
-GET	/teams/new	new	return an HTML form for creating a new team
-POST	/teams	create	create a new team (using form data from /teams/new)
-
-GET	/teams/:name	show	display a specific team
-GET	/teams/:name/edit	edit	return an HTML form for editing a team
-PUT	/teams/:name	update	update a specific team (using form data from /teams/:name/edit)
-DELETE	/teams/:name	destroy	deletes a specific team
+<div class="container">
+  Update current <%=roomToEdit.beds%> beds reservation
+  <form action=<%= "/rooms/" + roomToEdit.id + "?_method=PUT" %> method="POST">
+    <div class="form-group">
+      <label for="dateFrom">From Date</label>
+      <input type="date" class="form-control" id="fromInput" placeholder="mm/dd/yyyy" name="dateFrom">
+    </div>
+    <div class="form-group">
+      <label for="dateTo">To Date</label>
+      <input type="date" class="form-control" id="toInput" placeholder="mm/dd/yyyy" name="dateTo">
+    </div>
+    <button type="submit" class="btn btn-default">Update Reservation</button>
+  </form>
+</div>

@@ -1,8 +1,9 @@
+<% include ../static/header %>
 
 <div class="container">
 
   <div class="panel panel-default">
-    <div class="panel-heading">Current Reservations</div>
+    <div class="panel-heading">Possible Reservations</div>
     <table class="table">
       <tr>
         <th>Bedrooms</th>
@@ -19,7 +20,7 @@
         <td><%- rooms.dateFrom %></td>
         <td><%- rooms.dateTo %></td>
         <td>
-        <form action=<%= "/rooms/" + rooms.id + "?_method=PUT" %>  method="POST">
+        <form action="/rooms"  method="POST">
         <button type="submit">Reserve Now</button>
         </form>
         </td>
@@ -29,7 +30,7 @@
   </div>
 
 
-  <form action="/rooms">  method="GET">
-    <button type="submit">Make new reservations</button>
+  <form action="/rooms/search" method="GET">
+    <button type="submit">Make new search</button>
   </form>
 </div>

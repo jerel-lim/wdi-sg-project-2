@@ -2,11 +2,10 @@
 
 <h1>Welcome <%- currentUser.name%></h1>
 
-
 <div class="container">
 
   <div class="panel panel-default">
-    <div class="panel-heading">Current Reservations</div>
+    <div class="panel-heading">All Rooms for Reservations</div>
     <table class="table">
       <tr>
         <th>Bedrooms</th>
@@ -16,19 +15,19 @@
         <th></th>
         <th></th>
       </tr>
-      <% currentUser.reservations_id.forEach(function (rooms) { %>
+      <% allRooms.forEach(function (rooms) { %>
         <tr>
         <td><%- rooms.beds %></td>
         <td><%- rooms.price %></td>
         <td><%- rooms.dateFrom %></td>
         <td><%- rooms.dateTo %></td>
         <td>
-        <form method="POST" action="/rooms/<%=rooms.id%>?_method=DELETE">
+        <form method="POST" action="/rooms/admin/<%=rooms.id%>?_method=DELETE">
         <button type="submit"><span class="glyphicon glyphicon-remove"></span>Remove</button>
         </form>
         </td>
         <td>
-        <form action=<%= "/rooms/" + rooms.id + "/edit" %>  method="GET">
+        <form action=<%= "/rooms/admin/" + rooms.id + "/edit" %>  method="GET">
         <button type="submit">Update</button>
         </form>
         </td>
@@ -38,7 +37,7 @@
   </div>
 
 
-  <form action="/rooms/search" method="GET">
-    <button type="submit">Make new reservations</button>
+  <form action="/rooms/admin/new" method="GET">
+    <button type="submit">Add new rooms</button>
   </form>
 </div>
