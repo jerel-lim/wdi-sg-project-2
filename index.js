@@ -72,6 +72,8 @@ mongoose.Promise = global.Promise
 
 
 app.get('/', function (req, res) {
+  if (req.isAuthenticated() === true) {
+  return res.redirect('/users/'+ req.user.id)}
   res.render('static/homepage')
 })
 

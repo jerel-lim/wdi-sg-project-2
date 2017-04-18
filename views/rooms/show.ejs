@@ -3,19 +3,19 @@
 <div class="container">
   <form action="/rooms/search" method="POST">
     <div class="form-group">
-      <label for="beds">Number of Beds</label>
+      <label for="beds">Number of Beds (required)</label>
       <input type="number" class="form-control" id="bedInput" placeholder="Number of Beds" name="beds">
     </div>
     <div class="form-group">
-      <label for="dateFrom">From Date</label>
+      <label for="dateFrom">From Date (required)</label>
       <input type="date" class="form-control" id="fromInput" placeholder="mm/dd/yyyy" name="dateFrom">
     </div>
     <div class="form-group">
-      <label for="dateTo">To Date</label>
+      <label for="dateTo">To Date (required)</label>
       <input type="date" class="form-control" id="toInput" placeholder="mm/dd/yyyy" name="dateTo">
     </div>
     <div class="form-group">
-      <label for="price">Maximum Price</label>
+      <label for="price">Maximum Price (optional)</label>
       <input type="number" class="form-control" id="priceInput" placeholder="Enter your budget" name="price">
     </div>
     <button type="submit" class="btn btn-default">Search for Rooms</button>

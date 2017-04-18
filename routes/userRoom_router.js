@@ -9,11 +9,15 @@ const isAdmin = require('./isAdmin/isAdmin')
 
 
 
-router.get('/', notLoggedIn, isAdmin, roomController.userListAll)//list all current reservation
-router.post('/', notLoggedIn, isAdmin, roomController.userCreate) //new reservation
+
 
 router.get('/search', notLoggedIn, isAdmin, roomController.userSearchFieldsValue) //form for selecting fields for searching possible reservations
 router.post('/search', notLoggedIn, isAdmin, roomController.userSearchFields) //display list of all posible reservations for user
+
+router.get('/', notLoggedIn, isAdmin, roomController.userListAll)//list all current reservation
+router.post('/:id', notLoggedIn, isAdmin, roomController.userCreate) //new reservation
+
+
 
 router.get('/:id/edit', notLoggedIn, isAdmin, roomController.userFormForUpdate) //form to update
 

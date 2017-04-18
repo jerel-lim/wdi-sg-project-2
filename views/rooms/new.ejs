@@ -17,14 +17,20 @@
         <tr>
         <td><%- rooms.beds %></td>
         <td><%- rooms.price %></td>
-        <td><%- rooms.dateFrom %></td>
-        <td><%- rooms.dateTo %></td>
+        <td><%- dateSearchFrom %></td>
+        <td><%- dateSearchTo %></td>
+        <form action="/rooms/<%=rooms._id%>"  method="POST">
         <td>
-        <form action="/rooms"  method="POST">
+        <input type='hidden' name='startDate' value='<%= dateSearchFrom %>' >
+        <input type='hidden' name='endDate' value='<%= dateSearchTo %>' >
+        <input type='hidden' name='originalStart' value='<%= rooms.dateFrom%>' >
+        <input type='hidden' name='originalEnd' value='<%= rooms.dateTo%>' >
+        <input type='hidden' name='beds' value='<%= rooms.beds%>' >
+        <input type='hidden' name='price' value='<%= rooms.price%>' >
         <button type="submit">Reserve Now</button>
-        </form>
         </td>
         </tr>
+        </form>
         <% }) %>
     </table>
   </div>

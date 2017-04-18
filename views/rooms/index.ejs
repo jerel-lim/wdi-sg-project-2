@@ -1,6 +1,6 @@
 <% include ../static/header %>
 
-<h1>Welcome <%- currentUser.name%></h1>
+<h1>Welcome <%- user.name%></h1>
 
 
 <div class="container">
@@ -16,7 +16,7 @@
         <th></th>
         <th></th>
       </tr>
-      <% currentUser.reservations_id.forEach(function (rooms) { %>
+      <% user.reservations_id.forEach(function (rooms) { %>
         <tr>
         <td><%- rooms.beds %></td>
         <td><%- rooms.price %></td>

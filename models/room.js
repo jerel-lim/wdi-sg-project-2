@@ -20,7 +20,7 @@ var roomSchema = mongoose.Schema({
   },
   status: {
     type: Boolean,
-    default: false
+    default: true
   }
 })
 

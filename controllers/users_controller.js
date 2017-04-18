@@ -60,15 +60,10 @@ let userController = {
   },
 
   show: function (req, res) {
-    console.log(req.user)
+
     if (req.user.isAdmin === false) {
-      User.findById(req.params.id).populate('reservations_id').exec( function (err, user) {
-        if (err) res.redirect('/login')
-        res.render('rooms/index', {
-          userProfile: user
-        })
-      })
-}
+      res.redirect('/rooms')
+      }
     else {(res.redirect('/rooms/admin'))
   }
   }

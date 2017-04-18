@@ -1,23 +1,63 @@
 const Room = require('../models/room')
+const User = require('../models/user')
+
 let roomController = {
   userListAll: function (req, res) {
-    res.render('rooms/index')
+    User.findOne(req.user).populate('reservations_id').exec( function (err, user) {
+      console.log(user, 'user details')
+      if (err) res.redirect('/login')
+      res.render('rooms/index', {user: user})
+    })
   },
 
   userCreate: function (req, res) {
-// to ask for help
-//
+var startDate = new Date(req.body.startDate)
+var endDate = new Date(req.body.endDate)
+var originalStart = new Date(req.body.originalStart)
+var originalEnd = new Date(req.body.originalEnd)
+var adjustedStartDate = new Date(startDate);
+var startDateMinus1 = adjustedStartDate.setDate(adjustedStartDate.getDate() - 1)
+var adjustedEndDate = new Date(startDate);
+var endDatePlus1 = adjustedEndDate.setDate(adjustedEndDate.getDate() + 1)
 
-// var newRoom = new Room({
-//     beds: req.body.beds,
-//     address: req.body.issues.address,
-//     problem: req.body.issues.problem,
-//     dateCreated: req.body.issues.dateCreated,
-//     user_id: req.user._id,
-//     isFixed: req.body.issues.isFixed
-//   })
-
-    res.render('rooms/index')
+//need to set status to false
+Room.findByIdAndUpdate(req.params.id, { $set: { status: false}}, function (err, output) {
+  if (err) throw err
+})
+var newRoom1 = new Room({
+  beds: parseInt(req.body.beds),
+  price: parseInt(req.body.price),
+  dateFrom: originalStart,
+  dateTo: startDateMinus1,
+  status: true
+})
+newRoom1.save(function (err, savedEntry) {
+      if (err) throw err
+})
+var newRoom2 = new Room({
+  beds: parseInt(req.body.beds),
+  price: parseInt(req.body.price),
+  dateFrom: endDatePlus1,
+  dateTo: originalEnd,
+  status: true
+})
+newRoom2.save(function (err, savedEntry) {
+      if (err) throw err
+})
+var newRoom3 = new Room({
+  beds: parseInt(req.body.beds),
+  price: parseInt(req.body.price),
+  dateFrom: startDate,
+  dateTo: endDate,
+  status: false
+})
+newRoom3.save(function (err, savedEntry) {
+      if (err) throw err
+})
+var userRooms = req.user.reservations_id
+    userRooms.push(newRoom3)
+    req.user.save()
+    res.redirect('/rooms')
   },
 
   userSearchFieldsValue: function (req, res) {
@@ -33,20 +73,28 @@ let roomController = {
       req.flash('error', 'From Date is later than To Date')
       res.redirect('/rooms/search')
     }
-    if (req.body.beds < 0) {
+    if (req.body.beds < 0 ||!req.body.beds) {
       req.flash('error', 'Please fill in valid number of beds')
       res.redirect('/rooms/search')
     }
-    console.log(req.body)
+    if (!req.body.price){
+      req.body.price = 99999999999999
+    }
     Room.find(
-      {beds: req.body.beds, // add in option for no beds
-        dateFrom: { $lte: req.body.dateFrom}, // dates wrong?
-        dateTo: {$gte: req.body.dateTo},
-        price: { $lte: req.body.price}, // to add in option for no price
-        status: false}, function (err, rooms) {
+      {$and: [{beds:  parseInt(req.body.beds)},
+        {price: {$lte: parseInt(req.body.price)}},
+        {dateFrom: { $lte: req.body.dateFrom}},
+        {dateTo: {$gte: req.body.dateTo}},
+        {status: true}
+      ] }, // add in option for no beds
+        // dateFrom: { $lte: req.body.dateFrom}, // dates wrong?
+        // dateTo: {$gte: req.body.dateTo},
+        // price: { $lte: parseInt(req.body.price)}], // to add in option for no price
+         function (err, rooms) {
       if (err) throw err
-      console.log(rooms)
-      res.render('rooms/new', { allAvailableRooms: rooms })
+      res.render('rooms/new', { allAvailableRooms: rooms,
+      dateSearchFrom:req.body.dateFrom,
+      dateSearchTo:req.body.dateTo })
     })
   },
 
@@ -86,7 +134,7 @@ let roomController = {
   },
 
   adminAllRooms: function (req, res) {
-    Room.find({}, (err, rooms) => {
+    Room.find({status: true}, (err, rooms) => {
       if (err) throw err
       res.render('rooms/adminListAll', { allRooms: rooms})
     })
