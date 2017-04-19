@@ -11,7 +11,6 @@ var userSchema = mongoose.Schema({
  name: {
    type:String,
    required:true,
-   unique:true,
    minlength: [3, 'Password must be 3 and 99 charactes']
  },
  password: {

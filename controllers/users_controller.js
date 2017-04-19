@@ -16,6 +16,10 @@ let userController = {
       req.flash('error', 'Please fill in all fields')
       res.redirect('/signup')
     }
+    // if(!req.body.password || !req.body.name || !req.body.email) {
+    //   req.flash('error', 'Please fill in all fields')
+    //   res.redirect('/signup')
+    // }
     var signupStrategy = passport.authenticate('local-signup', {
       successRedirect: '/users/' + req.body.id, // edit /profile to user page
       failureRedirect: '/signup',

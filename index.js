@@ -1,7 +1,8 @@
+require('dotenv').config({silent:true})
 var express = require('express')
 var app = express()
 var port = process.env.PORT || 4000
-require('dotenv').config({silent:true})
+
 // mongoose setup
 var dbURI = process.env.PROD_MONGODB || 'mongodb://localhost:27017/project2'
 var mongoose = require('mongoose')
@@ -30,12 +31,14 @@ app.use(bodyParser.json())
 var expressLayouts = require('express-ejs-layouts')
 app.use(expressLayouts)
 app.set('view engine', 'ejs')
-app.use(require('morgan')('dev'));
+app.use(require('morgan')('dev'))
+app.use(express.static('assets')) //to edit
+
 // setup the method override
 var methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
-app.use(express.static('assets'))
+//setting up sessions
 var session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 app.use(session({
@@ -45,32 +48,26 @@ app.use(session({
   store: new MongoStore({url: 'mongodb://localhost:27017/project2'})
 }))
 
-
+//setting up passport
 
 var passport = require ('./config/passport')
 app.use(passport.initialize())
 app.use(passport.session())
 
+//setting up flash
 var flash = require('connect-flash')
 app.use(flash())
 app.use(function(req, res, next) {
   res.locals.alerts = req.flash();
   res.locals.currentUser = req.user;
   next();
-});
+})
+
+//setting up global promise
 mongoose.Promise = global.Promise
 
 
-
-
-
-
-
-
-
-
-
-
+//start of routes
 app.get('/', function (req, res) {
   if (req.isAuthenticated() === true) {
   return res.redirect('/users/'+ req.user.id)}
@@ -82,39 +79,6 @@ app.use('/', userRouter)
 
 var userRoomRouter = require('./routes/userRoom_router')
 app.use('/rooms', userRoomRouter)
-
-// app.get('/login', function (req, res) {
-//   res.render('auth/login')
-// })
-
-// app.get('/profile', function (req, res) {
-//   res.render('static/profile')
-// })
-// var authController = require('./controllers/auth')
-// app.use('/login', authController);
-
-
-
-// require the movies_controller
-// var moviesController = require('./controllers/movies_controller')
-// app.use(moviesController)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.use(function (req, res) {
   res.send('error found')
