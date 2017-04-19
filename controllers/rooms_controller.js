@@ -10,16 +10,20 @@ let roomController = {
   },
 
   userCreate: function (req, res) {
+    // to parse string values of dates from POST to dates
     var startDate = new Date(req.body.startDate)
-    var endDate = new Date(req.body.endDate)
-    var originalStart = new Date(req.body.originalStart)
-    var originalEnd = new Date(req.body.originalEnd)
     var adjustedStartDate = new Date(startDate)
     var startDateMinus1 = adjustedStartDate.setDate(adjustedStartDate.getDate() - 1)
+
+    var endDate = new Date(req.body.endDate)
     var adjustedEndDate = new Date(endDate)
     var endDatePlus1 = adjustedEndDate.setDate(adjustedEndDate.getDate() + 1)
 
-// need to set status to false
+    var originalStart = new Date(req.body.originalStart)
+
+    var originalEnd = new Date(req.body.originalEnd)
+
+// need to set status to false (room reserved for duration requested)
     var newRoom1 = new Room({
       beds: parseInt(req.body.beds),
       price: parseInt(req.body.price),
@@ -30,32 +34,38 @@ let roomController = {
     newRoom1.save(function (err, savedEntry) {
       if (err) throw err
     })
-    var newRoom2 = new Room({
-      beds: parseInt(req.body.beds),
-      price: parseInt(req.body.price),
-      dateFrom: originalStart,
-      dateTo: startDateMinus1,
-      status: true,
-      createdByBooking: [newRoom1.id]
-    })
-    newRoom2.save(function (err, savedEntry) {
+    // create new room of duration before the booking
+    if (originalStart <= startDateMinus1) {
+      var newRoom2 = new Room({
+        beds: parseInt(req.body.beds),
+        price: parseInt(req.body.price),
+        dateFrom: originalStart,
+        dateTo: startDateMinus1,
+        status: true
+      })
+      newRoom2.save(function (err, savedEntry) {
+        if (err) throw err
+      })
+    }
+    // to merge rooms with similar original start dates
+
+    // create new room of duration after the booking
+    if (endDatePlus1 <= originalEnd) {
+      var newRoom3 = new Room({
+        beds: parseInt(req.body.beds),
+        price: parseInt(req.body.price),
+        dateFrom: endDatePlus1,
+        dateTo: originalEnd,
+        status: true
+      })
+      newRoom3.save(function (err, savedEntry) {
+        if (err) throw err
+      })
+    }
+  // update original booking to false status since it is broken up into the 3 parts above(newRooms 1,2 and 3).
+    Room.findByIdAndUpdate(req.params.id, { $set: { status: false}}, function (err, output) {
       if (err) throw err
     })
-    var newRoom3 = new Room({
-      beds: parseInt(req.body.beds),
-      price: parseInt(req.body.price),
-      dateFrom: endDatePlus1,
-      dateTo: originalEnd,
-      status: true,
-      createdByBooking: [newRoom1.id]
-    })
-    newRoom3.save(function (err, savedEntry) {
-      if (err) throw err
-    })
-    Room.findByIdAndUpdate(req.params.id, { $set: { status: false}, $push: { createdByBooking: newRoom1.id }}
-  , function (err, output) {
-    if (err) throw err
-  })
     var userRooms = req.user.reservations_id
     userRooms.push(newRoom1)
     req.user.save()
@@ -88,16 +98,12 @@ let roomController = {
         {dateFrom: { $lte: req.body.dateFrom}},
         {dateTo: {$gte: req.body.dateTo}},
         {status: true}
-      ] }, // add in option for no beds
-        // dateFrom: { $lte: req.body.dateFrom}, // dates wrong?
-        // dateTo: {$gte: req.body.dateTo},
-        // price: { $lte: parseInt(req.body.price)}], // to add in option for no price
-         function (err, rooms) {
-           if (err) throw err
-           res.render('rooms/new', { allAvailableRooms: rooms,
-             dateSearchFrom: req.body.dateFrom,
-             dateSearchTo: req.body.dateTo })
-         })
+      ] }, function (err, rooms) {
+      if (err) throw err
+      res.render('rooms/new', { allAvailableRooms: rooms,
+        dateSearchFrom: req.body.dateFrom,
+        dateSearchTo: req.body.dateTo })
+    })
   },
   // //////////////////REMOVED UPDATE RESERVATION FUNCTIONALITY FOR MVP
 
@@ -170,17 +176,44 @@ let roomController = {
 //   },
 
   userRemove: function (req, res) {
-    Room.update({createdByBooking: [req.params.id], status: true }, { $set: { status: false}})
+    // finding room by the deleted room ID
+    Room.findById(req.params.id, function (err, reservation) {
+      if (err) {
+        throw err
+      }
 
-    Room.findByIdAndUpdate(req.params.id, { $set: { status: true}}, function (err, output) {
-      if (err) throw err
-      console.log(req.user.reservations_id, 'req.user')
-      var deletedroomId = req.params.id
-      var userRooms = req.user.reservations_id
-      userRooms.splice(userRooms.indexOf(deletedroomId), 1)
-      req.user.save()
-      req.flash('success', 'You have deleted your reservation.')
-      res.redirect('/rooms')
+      // parsing dates of the deleted room ID to plus 1 day and minus 1 day for merging
+      var originalEnd = new Date(reservation.dateTo)
+      var adjustedOriginalEnd = new Date(originalEnd)
+      var originalEndPlus1 = adjustedOriginalEnd.setDate(adjustedOriginalEnd.getDate() + 1)
+      var originalStart = new Date(reservation.dateFrom)
+      var adjustedOriginalStart = new Date(originalStart)
+      var originalStartMinus1 = adjustedOriginalStart.setDate(adjustedOriginalStart.getDate() - 1)
+      // find room which match the deleted room date -1 (one of the 3 rooms that were created in the above create function), and update the status to false, so it is not considered available anymore.
+      Room.findOneAndUpdate({$and: [{beds: reservation.beds, price: reservation.price, dateTo: originalStartMinus1, status: true }
+      ] }, { $set: {status: false}}, {new: true}, function (err, doc) {
+        if (err) {
+          throw err
+        }
+        // find the other room that was created, and merge the dates of the rooms so the entire availability duration is captured
+        Room.findOneAndUpdate({$and: [{beds: reservation.beds, price: reservation.price, dateFrom: originalEndPlus1, status: true }
+        ] }, { $set: { dateFrom: doc.dateFrom }}, {new: true}, function (err, doc) {
+          if (err) {
+            throw err
+          }
+          // find the deleted room and change status to false.
+          Room.findByIdAndUpdate(req.params.id, { $set: { status: false}}, function (err, output) {
+            if (err) throw err
+            console.log(req.user.reservations_id, 'req.user')
+            var deletedroomId = req.params.id
+            var userRooms = req.user.reservations_id
+            userRooms.splice(userRooms.indexOf(deletedroomId), 1)
+            req.user.save()
+            req.flash('success', 'You have deleted your reservation.')
+            res.redirect('/rooms')
+          })
+        })
+      })
     })
   },
 

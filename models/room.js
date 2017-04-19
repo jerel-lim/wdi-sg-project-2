@@ -21,10 +21,6 @@ var roomSchema = mongoose.Schema({
   status: {
     type: Boolean,
     default: true
-  },
-  createdByBooking: {
-    type: Array,
-    default: []
   }
 })
 
