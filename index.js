@@ -8,6 +8,8 @@ var dbURI = process.env.PROD_MONGODB || 'mongodb://localhost:27017/project2'
 var mongoose = require('mongoose')
 mongoose.connect(dbURI)
 
+// app.use(express.static('public'))
+
 // check if our connection is okay
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
