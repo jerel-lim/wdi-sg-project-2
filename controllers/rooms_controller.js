@@ -229,6 +229,7 @@ let roomController = {
   },
 
   adminCreateNewRooms: function (req, res) {
+    console.log(req.body)
     if (!req.body.beds || req.body.beds < 1) {
       req.flash('error', 'Please set number of beds')
       res.redirect('/rooms/admin/new')
@@ -247,7 +248,7 @@ let roomController = {
         price: req.body.price,
         dateFrom: req.body.dateFrom,
         dateTo: req.body.dateTo,
-        status: false
+        status: true
       })
       newRoom.save(function (err, savedEntry) {
         if (err) throw err
