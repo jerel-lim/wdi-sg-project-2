@@ -47,7 +47,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: new MongoStore({url: 'dbURI'})
+  store: new MongoStore({url: dbURI})
 }))
 
 //setting up passport
