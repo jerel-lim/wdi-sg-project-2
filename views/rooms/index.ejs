@@ -1,11 +1,11 @@
 <% include ../static/header %>
 
-<h1>Welcome <%- user.name%></h1>
+<h2>Welcome <%- user.name%></h2>
 
 
 <div class="container">
 
-  <div class="panel panel-default">
+  <div class="panel panel-primary">
     <div class="panel-heading">Current Reservations</div>
     <table class="table">
       <tr>
@@ -24,21 +24,14 @@
         <td><%- rooms.dateTo %></td>
         <td>
         <form method="POST" action="/rooms/<%=rooms.id%>?_method=DELETE">
-        <button type="submit"><span class="glyphicon glyphicon-remove"></span>Remove</button>
+        <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
         </form>
-        </td>
-        <td>
-        <form action=<%= "/rooms/" + rooms.id + "/edit" %>  method="GET">
-        <button type="submit">Update</button>
-        </form>
-        </td>
-        </tr>
         <% }) %>
     </table>
   </div>
 
 
   <form action="/rooms/search" method="GET">
-    <button type="submit">Make new reservations</button>
+    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Make new reservations</button>
   </form>
 </div>

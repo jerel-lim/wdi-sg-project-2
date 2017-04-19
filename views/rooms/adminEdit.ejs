@@ -1,6 +1,8 @@
 <% include ../static/header %>
 
 <div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">Current Room Selection</div>
   <table class="table">
     <tr>
       <th>Bedrooms</th>
@@ -17,10 +19,9 @@
       <td><%- toUpdateRoom.dateTo %></td>
       </tr>
   </table>
+</div>
 
-
-  Update above <%=toUpdateRoom.beds%> bed room details to :
-</br>
+<h3><span class="label label-default">Update To:</span></h3>
 </br>
 
   <form action=<%= "/rooms/admin/" + toUpdateRoom.id + "?_method=PUT" %> method="POST">
@@ -36,6 +37,13 @@
       <label for="dateTo">Available To Date</label>
       <input type="date" class="form-control" id="toInput" placeholder="mm/dd/yyyy" name="dateTo">
     </div>
-    <button type="submit" class="btn btn-default">Update Room Details</button>
+    <button type="submit" class="btn btn-primary"><span class = "glyphicon glyphicon-edit"></span>Update Room Details</button>
   </form>
+
+  <nav aria-label="...">
+  <ul class="pager">
+    <li><a href="/rooms/admin">Back to Rooms Listing</a></li>
+  </ul>
+</nav>
+
 </div>

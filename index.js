@@ -1,4 +1,4 @@
-require('dotenv').config({silent:true})
+require('dotenv').config({silent: true})
 var express = require('express')
 var app = express()
 var port = process.env.PORT || 4000
@@ -34,13 +34,13 @@ var expressLayouts = require('express-ejs-layouts')
 app.use(expressLayouts)
 app.set('view engine', 'ejs')
 app.use(require('morgan')('dev'))
-app.use(express.static('assets')) //to edit
+app.use(express.static('assets')) // to edit
 
 // setup the method override
 var methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
-//setting up sessions
+// setting up sessions
 var session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 app.use(session({
@@ -50,29 +50,29 @@ app.use(session({
   store: new MongoStore({url: dbURI})
 }))
 
-//setting up passport
+// setting up passport
 
-var passport = require ('./config/passport')
+var passport = require('./config/passport')
 app.use(passport.initialize())
 app.use(passport.session())
 
-//setting up flash
+// setting up flash
 var flash = require('connect-flash')
 app.use(flash())
-app.use(function(req, res, next) {
-  res.locals.alerts = req.flash();
-  res.locals.currentUser = req.user;
-  next();
+app.use(function (req, res, next) {
+  res.locals.alerts = req.flash()
+  res.locals.currentUser = req.user
+  next()
 })
 
-//setting up global promise
+// setting up global promise
 mongoose.Promise = global.Promise
 
-
-//start of routes
+// start of routes
 app.get('/', function (req, res) {
   if (req.isAuthenticated() === true) {
-  return res.redirect('/users/'+ req.user.id)}
+    return res.redirect('/users/' + req.user.id)
+  }
   res.render('static/homepage')
 })
 
@@ -85,7 +85,6 @@ app.use('/rooms', userRoomRouter)
 app.use(function (req, res) {
   res.send('error found')
 })
-
 
 app.listen(port, function () {
   console.log('app is running at ' + port)

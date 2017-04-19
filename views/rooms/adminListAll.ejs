@@ -4,7 +4,7 @@
 
 <div class="container">
 
-  <div class="panel panel-default">
+  <div class="panel panel-primary">
     <div class="panel-heading">All Rooms for Reservations</div>
     <table class="table">
       <tr>
@@ -22,13 +22,13 @@
         <td><%- rooms.dateFrom %></td>
         <td><%- rooms.dateTo %></td>
         <td>
-        <form method="POST" action="/rooms/admin/<%=rooms.id%>?_method=DELETE">
-        <button type="submit"><span class="glyphicon glyphicon-remove"></span>Remove</button>
+        <form action=<%= "/rooms/admin/" + rooms.id + "/edit" %>  method="GET">
+        <button type="submit" class="btn btn-primary"><span class = "glyphicon glyphicon-edit"></span> Update</button>
         </form>
         </td>
         <td>
-        <form action=<%= "/rooms/admin/" + rooms.id + "/edit" %>  method="GET">
-        <button type="submit">Update</button>
+        <form method="POST" action="/rooms/admin/<%=rooms.id%>?_method=DELETE">
+        <button type="submit" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i> Remove</button>
         </form>
         </td>
         </tr>
@@ -38,6 +38,6 @@
 
 
   <form action="/rooms/admin/new" method="GET">
-    <button type="submit">Add new rooms</button>
+    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add new rooms</button>
   </form>
 </div>

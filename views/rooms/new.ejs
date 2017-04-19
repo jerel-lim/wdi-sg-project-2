@@ -2,7 +2,7 @@
 
 <div class="container">
 
-  <div class="panel panel-default">
+  <div class="panel panel-primary">
     <div class="panel-heading">Possible Reservations</div>
     <table class="table">
       <tr>
@@ -27,7 +27,7 @@
         <input type='hidden' name='originalEnd' value='<%= rooms.dateTo%>' >
         <input type='hidden' name='beds' value='<%= rooms.beds%>' >
         <input type='hidden' name='price' value='<%= rooms.price%>' >
-        <button type="submit">Reserve Now</button>
+        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Reserve Now</button>
         </td>
         </tr>
         </form>
@@ -37,6 +37,6 @@
 
 
   <form action="/rooms/search" method="GET">
-    <button type="submit">Make new search</button>
+    <button type="submit" class="btn btn-primary">Make new search</button>
   </form>
 </div>
