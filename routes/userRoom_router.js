@@ -16,9 +16,6 @@ router.put('/admin/:id', notLoggedIn, isNotAdmin, roomController.adminUpdate)// 
 
 router.delete('/admin/:id', notLoggedIn, isNotAdmin, roomController.adminRemove) // delete button
 
-
-
-
 // user room reservation routes
 router.get('/search', notLoggedIn, isAdmin, roomController.userSearchFieldsValue) // form for selecting fields for searching possible reservations
 router.post('/search', notLoggedIn, isAdmin, roomController.userSearchFields) // display list of all posible reservations for user
