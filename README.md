@@ -51,8 +51,15 @@ This idea for the app came up as part of achieving an app built with the followi
 * Login and Authentication using Passport
 
 ### Initial planning
-
+Use Cases
 ![Use Cases](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/Use%20Cases.jpg)
+
+ERD
+![ERD](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/ERD.pdf)
+
+Routes Planning
+![routes](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/Routes.PNG)
+
 
 ### Calculation of score
 As Ace has a variable score depending on the situation, the code is designed such that Ace always counts as 11, and only counts as 1 point when the score exceeds 21. This assumption is based on a rational player gameplay logic where the player is intending to achieve the highest score possible.
