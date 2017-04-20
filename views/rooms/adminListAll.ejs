@@ -12,6 +12,7 @@
         <th>Price/day</th>
         <th>From</th>
         <th>To</th>
+        <th>Availability</th>
         <th></th>
         <th></th>
       </tr>
@@ -21,6 +22,12 @@
         <td><%- rooms.price %></td>
         <td><%- rooms.dateFrom %></td>
         <td><%- rooms.dateTo %></td>
+        <td><% if(rooms.status === true){ %>
+          <h5><span class="label label-success">Available</span></h5>
+        <% } else{ %>
+          <h5><span class="label label-danger">Unavailable</span></h5>
+        <% } %>
+        </td>
         <td>
         <form action=<%= "/rooms/admin/" + rooms.id + "/edit" %>  method="GET">
         <button type="submit" class="btn btn-primary"><span class = "glyphicon glyphicon-edit"></span> Update</button>

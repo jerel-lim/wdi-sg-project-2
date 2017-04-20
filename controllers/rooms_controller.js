@@ -218,7 +218,7 @@ let roomController = {
   },
 
   adminAllRooms: function (req, res) {
-    Room.find({status: true}, (err, rooms) => {
+    Room.find({}, (err, rooms) => {
       if (err) throw err
       res.render('rooms/adminListAll', { allRooms: rooms})
     })
