@@ -1,15 +1,24 @@
-<% include ../static/header %>
-
-<form action="/login" method="POST">
-  <div class="form-group">
-    <label for="authEmail">Email</label>
-    <input id="authEmail" class="form-control" type="email" name="email">
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse navbar-right" id="mynavbar">
+      <ul class="nav navbar-nav">
+            <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li><a href="/signup"><span class="glyphicon glyphicon-user"></span> Register as New User</a></li>
+      </ul>
+    </div>
   </div>
+</nav>
 
-  <div class="form-group">
-    <label for="authPassword">Password</label>
-    <input id="authPassword" class="form-control" type="password" name="password">
-  </div>
+<div class="signincontainer">
+  <div class="card card-container">
 
-  <input class="btn btn-primary" type="submit">
-</form>
+    <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+    <p id="profile-name" class="profile-name-card"></p>
+    <form class="form-signin" action="/login" method="POST">
+      <span id="reauth-email" class="reauth-email"></span>
+        <input id="inputEmail" class="form-control" placeholder="Email address" required autofocus type="email" name="email">
+        <input id="inputPassword" class="form-control" type="password" name="password" placeholder="Password" required>
+      <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+    </form>
+    </div>
+</div>
