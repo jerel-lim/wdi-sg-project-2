@@ -55,17 +55,17 @@ Use Cases
 ![Use Cases](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/Use%20Cases.jpg)
 
 ERD
-![ERD](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/ERD.pdf)
+[ERD](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/ERD.pdf)
 
 Routes Planning
 ![routes](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/Routes.PNG)
 
 Wireframe
-![wireframe](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/wireframe.pdf)
+[wireframe](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/wireframe.pdf)
 
 
 ### Logic for the reservations made by users, and availability of rooms
-![reservations](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/User%20Reservations.pdf)
+[reservations](https://github.com/jerel-lim/wdi-sg-project-2/blob/master/assets/User%20Reservations.pdf)
 
 ### Public and restricted sites
 The application checks for isAdmin status and logged in status, to restrict users from viewing certain pages. isAdmin is determined by a boolean value upon creation of user account, where an admin key(only provided to business owners) is used.
